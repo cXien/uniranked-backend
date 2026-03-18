@@ -15,7 +15,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS — permite que la app de escritorio y la web se conecten
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,12 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Inicializar base de datos al arrancar
 @app.on_event("startup")
 def startup():
     inicializar_db()
 
-# Routers
 app.include_router(auth.router,      prefix="/auth",      tags=["Autenticacion"])
 app.include_router(partidas.router,  prefix="/partidas",  tags=["Partidas"])
 app.include_router(jugadores.router, prefix="/jugadores", tags=["Jugadores"])
