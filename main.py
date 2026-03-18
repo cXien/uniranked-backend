@@ -1,10 +1,10 @@
 """
 Uni Ranked — Backend principal
-API REST con FastAPI para manejar cuentas, partidas y rankings.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from database import inicializar_db
 from routers import auth, partidas, jugadores, rankings
@@ -21,6 +21,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(Exception)
+async def error_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc), "type": type(exc).__name__}
+    )
 
 @app.on_event("startup")
 def startup():
