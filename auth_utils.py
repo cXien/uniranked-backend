@@ -18,12 +18,17 @@ pwd_context    = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme  = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
+import hashlib
+
 def hashear_password(password: str) -> str:
-    return pwd_context.hash(password)
+    # bcrypt tiene limite de 72 bytes — pre-hasheamos con sha256 para evitar el limite
+    pre = hashlib.sha256(password.encode()).hexdigest()
+    return pwd_context.hash(pre)
 
 
 def verificar_password(password: str, hashed: str) -> bool:
-    return pwd_context.verify(password, hashed)
+    pre = hashlib.sha256(password.encode()).hexdigest()
+    return pwd_context.verify(pre, hashed)
 
 
 def crear_token(data: dict) -> str:
